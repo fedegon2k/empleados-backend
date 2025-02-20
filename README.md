@@ -168,8 +168,10 @@ composer install
 
 ### 3. Configurar el Archivo `.env`
 Configura las variables de entorno en el archivo .env:
-DATABASE_URL="mysql://usuario:contraseña@127.0.0.1:3306/empleados"
-MAILER_DSN=smtp://usuario:contraseña@smtp.servidor.com:puerto
+
+DATABASE_URL="mysql://usuario:password@127.0.0.1:3306/empleados"
+
+MAILER_DSN=smtp://usuario:password@smtp.servidor.com:puerto
 
 ### 4. Generar Claves JWT
 Ejecuta el siguiente comando para generar las claves de JWT:
@@ -180,13 +182,16 @@ Una vez generados los archivos `private.pem` y `public.pem`, debes colocarlos en
 Luego, actualiza tu archivo `.env`:
 
 JWT_SECRET_KEY=tu_clave_secreta
-JWT_PUBLIC_KEY_PATH=%kernel.project_dir%/config/jwt/public.pem 
+
+JWT_PUBLIC_KEY_PATH=%kernel.project_dir%/config/jwt/public.pem
+
 JWT_PRIVATE_KEY_PATH=%kernel.project_dir%/config/jwt/private.pem
 
 ### 5. Crear y Configurar la Base de Datos
 Crea la base de datos y ejecuta las migraciones:
 
 php bin/console doctrine:database:create
+
 php bin/console doctrine:migrations:migrate
 
 ### 7. Ejecutar el Servidor Local
