@@ -64,6 +64,8 @@ Obtiene la información del usuario autenticado.
 **GET** `/api/employees/`
 
 Obtiene todos los empleados.
+  -Parametro `search` (opcional): buscar por Nombre o apellido del empleado.
+
 
 **Respuesta**:
 - **200 OK**: 
