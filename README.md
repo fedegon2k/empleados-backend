@@ -12,7 +12,7 @@ Proyecto backend. Utiliza Symfony 6, JWT para la autenticación, y se conecta a 
 
 ## Endpoints de la API
 
-### 1. Registrar un Usuario - habilitado solo para ["ROLE_ADMIN"]
+### 1. Registrar un Usuario - debería ser solo para ["ROLE_ADMIN"] pero se deja público
 **POST** `/api/register`
 
 Crea un nuevo usuario ROLE_ADMIN.
