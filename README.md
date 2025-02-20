@@ -203,4 +203,16 @@ symfony serve
 Accede a la aplicación en tu navegador visitando la URL `http://127.0.0.1:8000`
 
 
+### 9. Importar Endpoints en Insomnia
+
+Para facilitar las pruebas de la API, puedes importar los endpoints en Insomnia.
+
+1. Descarga el archivo de exportación:
+   [Insomnia Empleados](docs/insomnia_empleados.json)
+
+2. Abre Insomnia y ve a **Application > Import/Export > Import Data > From File**.
+
+3. Selecciona el archivo JSON
+
+Esto configurará los endpoints para probar la API.
 
