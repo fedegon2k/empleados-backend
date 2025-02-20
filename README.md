@@ -146,3 +146,56 @@ Obtiene un listado de posiciones desde una API externa.
 		"product manager"
 	]
 }
+
+## Instalación (Linux)
+
+### Requisitos Previos
+
+- PHP 8.1 o superior
+- Composer
+- Symfony 6.x
+- Base de datos MySQL
+
+### 1. Clonar el Repositorio
+Clona el repositorio en tu máquina local usando Git:
+
+git clone https://github.com/fedegon2k/empleados-backend
+cd empleados-backend
+
+### 2. Instalar Dependencias
+
+composer install
+
+### 3. Configurar el Archivo `.env`
+Configura las variables de entorno en el archivo .env:
+DATABASE_URL="mysql://usuario:contraseña@127.0.0.1:3306/empleados"
+MAILER_DSN=smtp://usuario:contraseña@smtp.servidor.com:puerto
+
+### 4. Generar Claves JWT
+Ejecuta el siguiente comando para generar las claves de JWT:
+
+php bin/console lexik:jwt:generate-keypair
+
+Una vez generados los archivos `private.pem` y `public.pem`, debes colocarlos en /config/jwt/
+Luego, actualiza tu archivo `.env`:
+
+JWT_SECRET_KEY=tu_clave_secreta
+JWT_PUBLIC_KEY_PATH=%kernel.project_dir%/config/jwt/public.pem 
+JWT_PRIVATE_KEY_PATH=%kernel.project_dir%/config/jwt/private.pem
+
+### 5. Crear y Configurar la Base de Datos
+Crea la base de datos y ejecuta las migraciones:
+
+php bin/console doctrine:database:create
+php bin/console doctrine:migrations:migrate
+
+### 7. Ejecutar el Servidor Local
+Finalmente, puedes ejecutar el servidor local de Symfony:
+
+symfony serve
+
+### 8. Acceder a la Aplicación
+Accede a la aplicación en tu navegador visitando la URL `http://127.0.0.1:8000`
+
+
+
