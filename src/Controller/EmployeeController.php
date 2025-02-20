@@ -25,13 +25,23 @@ final class EmployeeController extends AbstractController
     }
 
     /**
-     *  Obtener todos los empleados
+     *  Obtener todos los empleados o buscarlos por nombre
      */
     #[Route('/api/employees/', name: 'employee_list', methods: ['GET'])]
-    public function list(EmployeeRepository $employeeRepository): JsonResponse
+    public function list(Request $request, EmployeeRepository $employeeRepository): JsonResponse
     {
-        $employees = $employeeRepository->findAll();
-
+        $search = $request->query->get('search');
+    
+        if ($search) {
+            $employees = $employeeRepository->createQueryBuilder('e')
+                ->where('e.firstName LIKE :search OR e.lastName LIKE :search')
+                ->setParameter('search', '%' . $search . '%')
+                ->getQuery()
+                ->getResult();
+        } else {
+            $employees = $employeeRepository->findAll();
+        }
+    
         $data = array_map(fn ($employee) => [
             'id' => $employee->getId(),
             'firstName' => $employee->getFirstName(),
@@ -40,7 +50,7 @@ final class EmployeeController extends AbstractController
             'position' => $employee->getPosition(),
             'birthDate' => $employee->getBirthDate()?->format('Y-m-d'),
         ], $employees);
-
+    
         return $this->json($data);
     }
 
@@ -90,26 +100,41 @@ final class EmployeeController extends AbstractController
     }
 
     /**
-     *  Actualizar position (solo puede hacerlo el empleado)
+     *  Actualizar nombres si es admin o cargo si es el mismo empleado 
      */
     #[Route('/api/employees/{id}', name: 'employee_update', methods: ['PUT'])]
     public function update(Request $request, Employee $employee, EntityManagerInterface $entityManager, UserInterface $currentUser): JsonResponse
     {
-        // Verificar si el empleado es el mismo que el usuario autenticado
-        if ($employee->getUser() !== $currentUser) {
+        $data = json_decode($request->getContent(), true);
+    
+        // Verificar si el usuario autenticado es ADMIN
+        if (in_array('ROLE_ADMIN', $currentUser->getRoles())) {
+            if (isset($data['firstName'])) {
+                $employee->setFirstName($data['firstName']);
+            }
+            if (isset($data['lastName'])) {
+                $employee->setLastName($data['lastName']);
+            }
+            if (isset($data['position'])) {
+                $employee->setPosition($data['position']);
+            }
+        } 
+        // Si el usuario es un empleado, solo puede cambiar su propia posición
+        elseif ($employee->getUser() === $currentUser) {
+            if (isset($data['position'])) {
+                $employee->setPosition($data['position']);
+            } else {
+                return new JsonResponse(['error' => 'Solo puedes modificar tu cargo.'], JsonResponse::HTTP_FORBIDDEN);
+            }
+        } 
+        else {
             return new JsonResponse(['error' => 'No tienes permiso para editar este empleado.'], JsonResponse::HTTP_FORBIDDEN);
         }
-
-        $data = json_decode($request->getContent(), true);
-
-        if (isset($data['position'])) {
-            $employee->setPosition($data['position']);
-        }
-
+    
         $entityManager->flush();
-
+    
         return $this->json(['message' => 'Empleado actualizado exitosamente']);
-    }
+    }    
 
     /**
      *  Eliminar un empleado (solo puede hacerlo el empleado mismo)
